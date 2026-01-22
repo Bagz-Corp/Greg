@@ -8,7 +8,7 @@ class SearchRepository @Inject constructor(
 ) {
 
     suspend fun multiSearch(searchQuery: String): List<String> {
-        return dataSource.fetchMakersWorld(searchQuery)
+        return dataSource.fetchSketchFab(searchQuery).map { it.name }
     }
 
 }
