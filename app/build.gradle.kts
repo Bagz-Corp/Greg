@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
-    //alias(libs.plugins.android.hilt)
+    alias(libs.plugins.android.hilt)
 }
 
 android {
@@ -31,9 +31,14 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    kotlin {
+        jvmToolchain(8)
     }
 
     buildFeatures {
@@ -58,6 +63,14 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
+    implementation(libs.androidx.hilt.navigation.compose)
+
+    // DI with Hilt
     implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
     ksp(libs.hilt.android)
+
+    // Networking with retrofit
+    implementation(libs.retrofit)
+    implementation(libs.okhttp)
 }
