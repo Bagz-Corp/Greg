@@ -2,6 +2,7 @@ package com.gcorp.multirecherche3d.ui.designSystem
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,7 +38,8 @@ import com.gcorp.multirecherche3d.ui.theme.Typography
 @Composable
 fun ResultCard(
     modifier: Modifier = Modifier,
-    cardData: ModelItem
+    cardData: ModelItem,
+    onClick: (String) -> Unit
 ) {
     val painter = rememberAsyncImagePainter(
         model = cardData.thumbnails.firstOrNull()?.url?.toString()
@@ -49,7 +51,14 @@ fun ResultCard(
             .padding(4.dp)
             .width(200.dp)
             .height(200.dp)
-            .clip(RoundedCornerShape(24.dp)),
+            .clip(RoundedCornerShape(24.dp))
+            .clickable {
+                if (state is AsyncImagePainter.State.Success) {
+                    onClick(cardData.url)
+                } else {
+                    // Maybe show an error through a SnackBar for the user to wait
+                }
+            },
         colors = CardDefaults.cardColors().copy(
             containerColor = SlateBlue.copy(alpha = 0.30f),
             contentColor = SoftGrey
@@ -118,7 +127,8 @@ private fun ResultCardPreview() {
                 title = "Preview Title Superlong",
                 likeCount = 42,
                 url = "Preview URI"
-            )
+            ),
+            onClick = {}
         )
     }
 }

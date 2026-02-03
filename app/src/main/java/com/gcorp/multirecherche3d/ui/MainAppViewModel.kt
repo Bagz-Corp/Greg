@@ -1,5 +1,6 @@
 package com.gcorp.multirecherche3d.ui
 
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gcorp.multirecherche3d.domain.MultiSearchUseCase
@@ -13,11 +14,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainAppViewModel @Inject constructor(
-    val searchUseCase: MultiSearchUseCase
+    private val searchUseCase: MultiSearchUseCase,
 ): ViewModel() {
 
     private val _uiState = MutableStateFlow(MainUiState())
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
+
+    @Inject lateinit var customTabsIntent: CustomTabsIntent
 
     fun multiSearch(searchQuery: String) = viewModelScope.launch {
         _uiState.update { it.copy(isLoading = true) }

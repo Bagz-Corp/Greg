@@ -26,9 +26,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gcorp.multirecherche3d.domain.model.ModelItem
@@ -41,9 +43,11 @@ import com.gcorp.multirecherche3d.ui.theme.Typography
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainApp() {
+fun MainApp () {
     val viewModel: MainAppViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    val context = LocalContext.current
 
     Surface {
         Scaffold(
@@ -66,7 +70,12 @@ fun MainApp() {
                         SearchResultTitle()
                     }
 
-                    SearchResults(results = uiState.searchResults)
+                    SearchResults(
+                        results = uiState.searchResults,
+                        onCardClick = { url ->
+                            viewModel.customTabsIntent.launchUrl(context, url.toUri())
+                        }
+                    )
 
                     HorizontalDivider(
                         thickness = Dp.Hairline,
@@ -122,13 +131,17 @@ fun SearchResultTitle(modifier: Modifier = Modifier) {
 @Composable
 fun SearchResults(
     modifier: Modifier = Modifier,
-    results: List<ModelItem> = emptyList()
+    results: List<ModelItem> = emptyList(),
+    onCardClick: (String) -> Unit
 ) {
     LazyRow(
         modifier = modifier.height(300.dp)
     ) {
         items(results) {
-            ResultCard(cardData = it)
+            ResultCard(
+                cardData = it,
+                onClick = onCardClick
+            )
         }
     }
 }
@@ -163,7 +176,8 @@ private fun MainPreview() {
                         )
                     }
                     SearchResults(
-                        results = items
+                        results = items,
+                        onCardClick = {}
                     )
 
                     HorizontalDivider(
