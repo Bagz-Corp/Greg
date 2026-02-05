@@ -2,8 +2,10 @@ package com.gcorp.multirecherche3d.ui.designSystem
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,27 +13,29 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
 import com.gcorp.multirecherche3d.domain.model.ModelItem
 import com.gcorp.multirecherche3d.ui.shimmer
-import com.gcorp.multirecherche3d.ui.theme.GregTheme
-import com.gcorp.multirecherche3d.ui.theme.Pink80
-import com.gcorp.multirecherche3d.ui.theme.SageGreen
-import com.gcorp.multirecherche3d.ui.theme.SlateBlue
 import com.gcorp.multirecherche3d.ui.theme.SoftGrey
 import com.gcorp.multirecherche3d.ui.theme.Typography
 
@@ -41,39 +45,72 @@ fun ResultCard(
     cardData: ModelItem,
     onClick: (String) -> Unit
 ) {
-    val painter = rememberAsyncImagePainter(
-        model = cardData.thumbnails.firstOrNull()?.url?.toString()
-    )
-    val state by painter.state.collectAsStateWithLifecycle()
 
-    Card(
+    ElevatedCard(
         modifier = modifier
-            .padding(4.dp)
-            .width(200.dp)
-            .height(200.dp)
-            .clip(RoundedCornerShape(24.dp))
-            .clickable {
-                if (state is AsyncImagePainter.State.Success) {
-                    onClick(cardData.url)
-                } else {
-                    // Maybe show an error through a SnackBar for the user to wait
-                }
-            },
+            .width(300.dp)
+            .height(300.dp)
+            .clip(RoundedCornerShape(24.dp)),
         colors = CardDefaults.cardColors().copy(
-            containerColor = SlateBlue.copy(alpha = 0.30f),
-            contentColor = SoftGrey
+            containerColor = SoftGrey,
+            contentColor = Color.Black
         )
     ) {
-        Text(
-            modifier = Modifier.padding(start = 18.dp, end = 18.dp, top = 4.dp),
-            text = cardData.title,
-            style = Typography.titleMedium,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-        Spacer(modifier = Modifier.height(8.dp))
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
 
-        when(state) {
+            ResultCardImage(
+                modifier = Modifier.weight(1f),
+                imageUrl = cardData.thumbnails.maxBy { it.width }.url.toString()
+            )
+
+// For the moment, the Carousel is not used because we do not have enough pic url to display,
+//            HeroCarousel(
+//                modifier = Modifier
+//                    .weight(1f),
+//                thumbnails = cardData.thumbnails
+//            )
+
+            Text(
+                modifier = Modifier.padding(horizontal = 8.dp),
+                text = cardData.title,
+                style = Typography.titleMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+
+            Text(
+                modifier = Modifier
+                    .padding(horizontal = 8.dp),
+                text = "Likes : ${cardData.likeCount}",
+                style = MaterialTheme.typography.labelSmall,
+            )
+
+            ResultCardBottom(
+                cardUrl = cardData.url,
+                onClick = onClick
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ResultCardImage(
+    modifier: Modifier = Modifier,
+    imageUrl: String
+) {
+    Box(
+        modifier = modifier.clip(RoundedCornerShape(20.dp))
+    ) {
+        val painter = rememberAsyncImagePainter(
+            model = imageUrl
+        )
+        val state by painter.state.collectAsStateWithLifecycle()
+
+        when (state) {
             is AsyncImagePainter.State.Empty,
             is AsyncImagePainter.State.Loading -> {
                 Box(
@@ -82,53 +119,101 @@ fun ResultCard(
                         .shimmer()
                 )
             }
+
             is AsyncImagePainter.State.Success -> {
                 Image(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 18.dp)
-                        .clip(RoundedCornerShape(18.dp))
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxSize(),
                     painter = painter,
                     contentScale = ContentScale.FillBounds,
                     contentDescription = null
                 )
             }
+
             is AsyncImagePainter.State.Error -> {
                 // Show some error UI.
                 Text(
                     modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 18.dp)
-                        .background(color = Pink80.copy(alpha = 0.50f)),
+                        .fillMaxSize()
+                        .background(color = Color.LightGray)
+                        .padding(8.dp),
                     text = "Some Error happened"
                 )
             }
         }
-
-        Spacer(modifier = Modifier.height(2.dp))
-        Text(
-            modifier = Modifier
-                .padding(start = 18.dp, bottom = 4.dp),
-            text = "Likes : ${cardData.likeCount}",
-            style = MaterialTheme.typography.bodyMedium,
-        )
     }
 }
 
-@Preview
 @Composable
-private fun ResultCardPreview() {
-    GregTheme {
-        ResultCard(
-            modifier = Modifier.background(color = SageGreen),
-            cardData = ModelItem(
-                thumbnails = listOf(),
-                title = "Preview Title Superlong",
-                likeCount = 42,
-                url = "Preview URI"
-            ),
-            onClick = {}
-        )
+fun ResultCardBottom(
+    modifier: Modifier = Modifier,
+    cardUrl: String,
+    onClick: (String) -> Unit
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        ElevatedButton(
+            onClick = {
+                onClick(cardUrl)
+            }
+        ) {
+            Text(
+                text = "Voir modéle"
+            )
+        }
+
+        IconButton(
+            onClick = { /* Like */ }
+        ) {
+            Icon(
+                Icons.Outlined.FavoriteBorder,
+                contentDescription = "Ajouter aux favoris"
+            )
+        }
     }
 }
+
+// Preview is commented because of a conflict of JVM target used in Coil previewHandler (11)
+// and compiled one (8)
+//@OptIn(ExperimentalCoilApi::class)
+//@Preview
+//@Composable
+//private fun ResultCardPreview() {
+//    // Needed to override preview behavior to disable network
+//    val previewHandler = AsyncImagePreviewHandler {
+//        ColorImage(Color.LightGray.toArgb())
+//    }
+//
+//    CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
+//        GregTheme {
+//            ResultCard(
+//                cardData = ModelItem(
+//                    thumbnails = listOf(
+//                        Thumbnail(
+//                            url = URI("someUrl"),
+//                            width = 200,
+//                            height = 200
+//                        ),
+//                        Thumbnail(
+//                            url = URI("someUrl"),
+//                            width = 200,
+//                            height = 200
+//                        ),
+//                        Thumbnail(
+//                            url = URI("someUrl"),
+//                            width = 200,
+//                            height = 200
+//                        ),
+//                    ),
+//                    title = "Preview Title Superlong",
+//                    likeCount = 42,
+//                    url = "Preview URI"
+//                ),
+//                onClick = {}
+//            )
+//        }
+//    }
+//}

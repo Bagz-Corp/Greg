@@ -1,12 +1,15 @@
 package com.gcorp.multirecherche3d.ui
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -28,18 +31,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gcorp.multirecherche3d.domain.model.ModelItem
+import com.gcorp.multirecherche3d.domain.model.Thumbnail
 import com.gcorp.multirecherche3d.ui.designSystem.GregTopAppBar
 import com.gcorp.multirecherche3d.ui.designSystem.ResultCard
+import com.gcorp.multirecherche3d.ui.theme.Charcoal
 import com.gcorp.multirecherche3d.ui.theme.GregTheme
 import com.gcorp.multirecherche3d.ui.theme.OffWhite
 import com.gcorp.multirecherche3d.ui.theme.SageGreen
 import com.gcorp.multirecherche3d.ui.theme.Typography
+import java.net.URI
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,35 +59,14 @@ fun MainApp () {
             modifier = Modifier.background(color = SageGreen),
             topBar = { GregTopAppBar() }
         ) { paddingValues ->
-            HorizontalDivider()
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .background(color = SageGreen),
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                verticalArrangement = Arrangement.Top,
-            ) {
-                item { GregSearchBar(onSearch = viewModel::multiSearch) }
-
-                item {
-                    if (uiState.searchResults.isNotEmpty()) {
-                        SearchResultTitle()
-                    }
-
-                    SearchResults(
-                        results = uiState.searchResults,
-                        onCardClick = { url ->
-                            viewModel.customTabsIntent.launchUrl(context, url.toUri())
-                        }
-                    )
-
-                    HorizontalDivider(
-                        thickness = Dp.Hairline,
-                        color = OffWhite
-                    )
-                }
-            }
+            MainResultScreen(
+                modifier = Modifier.padding(paddingValues),
+                onSearch = viewModel::multiSearch,
+                onViewModel = { uri ->
+                    viewModel.customTabsIntent.launchUrl(context, uri)
+                },
+                searchResults = uiState.searchResults,
+            )
         }
     }
 }
@@ -120,11 +104,50 @@ fun GregSearchBar(
 }
 
 @Composable
+fun MainResultScreen(
+    modifier: Modifier = Modifier,
+    onSearch: (String) -> Unit,
+    onViewModel: (Uri) -> Unit,
+    searchResults: List<ModelItem>,
+) {
+    LazyColumn(
+        modifier = modifier
+            .fillMaxSize()
+            .background(color = SageGreen),
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        verticalArrangement = Arrangement.Top,
+    ) {
+        item { GregSearchBar(onSearch = onSearch) }
+
+        item {
+            Column (modifier = Modifier.padding(vertical = 8.dp)) {
+                if (searchResults.isNotEmpty()) {
+                    SearchResultTitle()
+                }
+
+                SearchResults(
+                    results = searchResults,
+                    onCardClick = { url ->
+                        onViewModel(url.toUri())
+                    }
+                )
+
+                HorizontalDivider(
+                    thickness = 2.dp,
+                    color = OffWhite
+                )
+            }
+        }
+    }
+}
+
+@Composable
 fun SearchResultTitle(modifier: Modifier = Modifier) {
     Text(
         text = "SketchFab",
-        style = Typography.displayMedium,
-        modifier = modifier.padding(16.dp)
+        style = Typography.headlineMedium,
+        modifier = modifier,
+        color = Charcoal
     )
 }
 
@@ -135,12 +158,15 @@ fun SearchResults(
     onCardClick: (String) -> Unit
 ) {
     LazyRow(
-        modifier = modifier.height(300.dp)
+        modifier = modifier.padding(vertical = 16.dp)
     ) {
         items(results) {
             ResultCard(
                 cardData = it,
                 onClick = onCardClick
+            )
+            Spacer(
+                modifier = Modifier.width(4.dp)
             )
         }
     }
@@ -155,37 +181,29 @@ private fun MainPreview() {
             modifier = Modifier.background(color = SageGreen),
             topBar = { GregTopAppBar() }
         ) { paddingValues ->
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .background(color = SageGreen),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.Top,
-            ) {
-                item { GregSearchBar(onSearch = {}) }
-
-                item {
-                    SearchResultTitle()
-                    val items = List(4) {
-                        ModelItem(
-                            thumbnails = emptyList(),
-                            title = "Card title",
-                            likeCount = 42,
-                            url = "some string"
-                        )
-                    }
-                    SearchResults(
-                        results = items,
-                        onCardClick = {}
-                    )
-
-                    HorizontalDivider(
-                        thickness = Dp.Hairline,
-                        color = OffWhite
-                    )
-                }
-            }
+            MainResultScreen(
+                modifier = Modifier.padding(paddingValues),
+                onSearch = {},
+                onViewModel = {},
+                searchResults = modelItems
+            )
         }
+    }
+}
+
+private val modelItems by lazy {
+    List(4) {
+        ModelItem(
+            thumbnails = listOf(
+                Thumbnail(
+                    url = URI("someUrl"),
+                    width = 42,
+                    height = 42
+                )
+            ),
+            title = "Card title",
+            likeCount = 42,
+            url = "some string"
+        )
     }
 }
