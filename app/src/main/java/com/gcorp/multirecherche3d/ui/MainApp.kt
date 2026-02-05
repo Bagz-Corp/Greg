@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,6 +25,7 @@ import androidx.compose.material3.SearchBarDefaults.InputField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -84,14 +86,14 @@ fun GregSearchBar(
             InputField(
                 modifier = modifier.fillMaxWidth(),
                 query = searchText,
-                onQueryChange = { },
+                onQueryChange = { searchText = it },
                 onSearch = onSearch,
                 expanded = false,
                 onExpandedChange = {},
                 placeholder = { Text("Rechercher...") },
                 leadingIcon = {
                     Icon(
-                        Icons.Default.Search,
+                        Icons.Filled.Search,
                         contentDescription = "Rechercher",
                     )
                 },
@@ -132,10 +134,12 @@ fun MainResultScreen(
                     }
                 )
 
-                HorizontalDivider(
-                    thickness = 2.dp,
-                    color = OffWhite
-                )
+                if (searchResults.isNotEmpty()) {
+                    HorizontalDivider(
+                        thickness = 2.dp,
+                        color = OffWhite
+                    )
+                }
             }
         }
     }
@@ -157,8 +161,14 @@ fun SearchResults(
     results: List<ModelItem> = emptyList(),
     onCardClick: (String) -> Unit
 ) {
+    val rowState = rememberLazyListState()
+    LaunchedEffect(results) {
+        rowState.animateScrollToItem(0)
+    }
+
     LazyRow(
-        modifier = modifier.padding(vertical = 16.dp)
+        modifier = modifier.padding(vertical = 16.dp),
+        state = rowState
     ) {
         items(results) {
             ResultCard(
