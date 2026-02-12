@@ -35,6 +35,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
 import com.gcorp.multirecherche3d.domain.model.ModelItem
+import com.gcorp.multirecherche3d.domain.model.getBigger
 import com.gcorp.multirecherche3d.ui.shimmer
 import com.gcorp.multirecherche3d.ui.theme.SoftGrey
 import com.gcorp.multirecherche3d.ui.theme.Typography
@@ -62,7 +63,7 @@ fun ResultCard(
 
             ResultCardImage(
                 modifier = Modifier.weight(1f),
-                imageUrl = cardData.thumbnails.maxBy { it.width }.url.toString()
+                imageUrl = cardData.thumbnails.getBigger().url
             )
 
 // For the moment, the Carousel is not used because we do not have enough pic url to display,

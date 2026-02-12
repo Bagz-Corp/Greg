@@ -46,7 +46,6 @@ import com.gcorp.multirecherche3d.ui.theme.GregTheme
 import com.gcorp.multirecherche3d.ui.theme.OffWhite
 import com.gcorp.multirecherche3d.ui.theme.SageGreen
 import com.gcorp.multirecherche3d.ui.theme.Typography
-import java.net.URI
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -206,7 +205,7 @@ private val modelItems by lazy {
         ModelItem(
             thumbnails = listOf(
                 Thumbnail(
-                    url = URI("someUrl"),
+                    url = "someUrl",
                     width = 42,
                     height = 42
                 )

@@ -30,7 +30,7 @@ fun HeroCarousel(
     val items = thumbnails.mapIndexed { index, thumbnail ->
         CarouselItem(
             id = index,
-            imageUrl = thumbnail.url.toString(),
+            imageUrl = thumbnail.url,
             contentDescription = ""
         )
     }

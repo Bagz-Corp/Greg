@@ -83,4 +83,10 @@ dependencies {
     // Custom Tabs
     implementation(libs.androidx.browser)
 
+    // Database with Room
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+    testImplementation(libs.androidx.room.testing)
+    //implementation("androidx.room:room-paging:${room_version}")
+
 }

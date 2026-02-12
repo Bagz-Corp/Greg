@@ -1,7 +1,5 @@
 package com.gcorp.multirecherche3d.domain.model
 
-import java.net.URI
-
 data class ModelItem (
     val thumbnails: List<Thumbnail>,
     val title: String,
@@ -10,7 +8,9 @@ data class ModelItem (
 )
 
 data class Thumbnail(
-    val url: URI,
-    val width: Int,
-    val height: Int
+    val url: String,
+    val width: Int = 0,
+    val height: Int = 0
 )
+
+fun List<Thumbnail>.getBigger() = maxBy { it.width }
