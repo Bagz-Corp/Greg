@@ -3,6 +3,7 @@ package com.gcorp.multirecherche3d.ui
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gcorp.multirecherche3d.data.ModelType
 import com.gcorp.multirecherche3d.domain.GetSearchResultsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,11 +20,13 @@ class MainAppViewModel @Inject constructor(
 
     @Inject lateinit var customTabsIntent: CustomTabsIntent
 
-    val uiState: StateFlow<MainUiState> = searchUseCase.getResults()
+    val uiState: StateFlow<MainUiState> = searchUseCase
+        .getResults()
         .map {
             MainUiState(
                 isLoading = false,
-                searchResults = it ?: emptyList()
+                sketchFabResults = it?.filter { it.sectionName == ModelType.SKETCH_FAB.value } ?: emptyList(),
+                makerWorldResults = it?.filter { it.sectionName == ModelType.MAKER_WORLD.value } ?: emptyList()
             )
         }
         .stateIn(

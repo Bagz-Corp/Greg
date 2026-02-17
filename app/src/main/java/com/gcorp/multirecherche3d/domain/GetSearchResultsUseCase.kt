@@ -10,7 +10,7 @@ class GetSearchResultsUseCase @Inject constructor(
     private val searchRepository: SearchRepository,
 ) {
 
-    fun getResults(): Flow<List<ModelItem>?> = searchRepository.searchResults
+    fun getResults(): Flow<List<ModelItem>?> = searchRepository.results
 
     suspend fun updateQuery(query: String) = searchRepository.updateQuery(query)
 

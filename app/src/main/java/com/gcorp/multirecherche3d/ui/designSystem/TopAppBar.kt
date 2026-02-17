@@ -1,4 +1,4 @@
-package com.gcorp.multirecherche3d.ui.designsystem
+package com.gcorp.multirecherche3d.ui.designSystem
 
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -13,6 +13,7 @@ import com.gcorp.multirecherche3d.ui.theme.Typography
 @Composable
 fun GregTopAppBar(modifier: Modifier = Modifier) {
     CenterAlignedTopAppBar(
+        modifier = modifier,
         title = { Text(
             text = "Greg",
             style = Typography.headlineLarge

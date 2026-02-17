@@ -4,11 +4,11 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.gcorp.multirecherche3d.database.dao.QueryDao
-import com.gcorp.multirecherche3d.database.entity.SearchQueryEntity
+import com.gcorp.multirecherche3d.database.entity.SearchResultsEntity
 import com.gcorp.multirecherche3d.database.utils.ResultEntityConverter
 
 @Database(
-    entities = [SearchQueryEntity::class],
+    entities = [SearchResultsEntity::class],
     version = 1
 )
 @TypeConverters(ResultEntityConverter::class)

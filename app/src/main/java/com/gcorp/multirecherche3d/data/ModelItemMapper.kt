@@ -1,13 +1,15 @@
 package com.gcorp.multirecherche3d.data
 
 import com.gcorp.multirecherche3d.database.entity.ResultEntity
-import com.gcorp.multirecherche3d.database.entity.SearchQueryEntity
+import com.gcorp.multirecherche3d.database.entity.SearchResultsEntity
 import com.gcorp.multirecherche3d.domain.model.ModelItem
 import com.gcorp.multirecherche3d.domain.model.Thumbnail
 import com.gcorp.multirecherche3d.domain.model.getBigger
+import com.gcorp.multirecherche3d.network.model.MakerWorldModel
 import com.gcorp.multirecherche3d.network.model.SketchFabModel
 
 fun SketchFabModel.toModelItem() = ModelItem(
+    sectionName = ModelType.SKETCH_FAB.value,
     thumbnails = thumbnails.images.map {
         Thumbnail(
             url = it.url,
@@ -20,26 +22,45 @@ fun SketchFabModel.toModelItem() = ModelItem(
     url = viewerUrl
 )
 
-fun SearchQueryEntity.asModelItems(): List<ModelItem> =
-    this.results.map {
-        ModelItem(
-            thumbnails = listOf(
-                Thumbnail(
-                    url = it.thumbnail
-                )
-            ),
-            title = it.title,
-            likeCount = it.likeCount,
-            url = it.url
+fun MakerWorldModel.toModelItem() = ModelItem(
+    sectionName = ModelType.MAKER_WORLD.value,
+    thumbnails = listOf(
+        Thumbnail(
+            url = imageUrl
         )
-    }
+    ),
+    title = title,
+    likeCount = likeCount,
+    url = generateContentUrl(),
+)
+
+fun SearchResultsEntity.asModelItems(): List<ModelItem> = buildList {
+    addAll(sketchFabResults.toModelItems(ModelType.SKETCH_FAB))
+    addAll(makerWorldResults.toModelItems(ModelType.MAKER_WORLD))
+}
+
+// Extension function for better readability
+private fun List<ResultEntity>.toModelItems(type: ModelType) = map {
+    ModelItem(
+        sectionName = type.value,
+        thumbnails = listOf(Thumbnail(url = it.imageUrl)),
+        title = it.title,
+        likeCount = it.likeCount,
+        url = it.contentUrl
+    )
+}
 
 fun List<ModelItem>.asResultEntities(): List<ResultEntity> =
     this.map {
         ResultEntity(
             title = it.title,
             likeCount = it.likeCount,
-            thumbnail = it.thumbnails.getBigger().url,
-            url = it.url
+            imageUrl = it.thumbnails.getBigger().url,
+            contentUrl = it.url
         )
     }
+
+enum class ModelType(val value: String) {
+    SKETCH_FAB("sketchFab"),
+    MAKER_WORLD("makerWorld")
+}

@@ -2,14 +2,12 @@ package com.gcorp.multirecherche3d.network.retrofit
 
 import androidx.compose.ui.util.trace
 import com.gcorp.multirecherche3d.network.RemoteDataSource
+import com.gcorp.multirecherche3d.network.model.MakerWorldModel
 import com.gcorp.multirecherche3d.network.model.SketchFabModel
-import com.google.gson.GsonBuilder
+import com.gcorp.multirecherche3d.network.retrofit.service.MakerWorldService
+import com.gcorp.multirecherche3d.network.retrofit.service.SketchFabService
 import dagger.Lazy
 import okhttp3.Call
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject
@@ -20,12 +18,7 @@ internal class RetrofitDataSource @Inject constructor(
     okhttpCallFactory: Lazy<Call.Factory>,
 ): RemoteDataSource {
 
-    private val okHttpClient = OkHttpClient
-        .Builder()
-        .addInterceptor(LogInterceptor())
-        .build()
-
-    private val apiSource : RetrofitApi = trace("Retrofit") {
+    private val sketchFabApiSource : SketchFabService = trace("sketchFabApiSource") {
         Retrofit
             .Builder()
             .baseUrl("https://sketchfab.com/i/")
@@ -33,23 +26,25 @@ internal class RetrofitDataSource @Inject constructor(
             // to prevent initializing OkHttp on the main thread.
             .callFactory { okhttpCallFactory.get().newCall(it) }
             .addConverterFactory(GsonConverterFactory.create())
-            .client(okHttpClient)
             .build()
-            .create(RetrofitApi::class.java)
+            .create(SketchFabService::class.java)
+    }
+
+    private val makerWorldApiSource: MakerWorldService = trace("makerWorldApiSource") {
+        Retrofit
+            .Builder()
+            .baseUrl("https://makerworld.com/")
+            .callFactory { okhttpCallFactory.get().newCall(it) }
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(MakerWorldService::class.java)
     }
 
     override suspend fun fetchSketchFab(searchQuery: String): List<SketchFabModel> =
-        apiSource.fetchSketchFab(searchQuery).results
+        sketchFabApiSource.search(searchQuery).results
+
+    override suspend fun fetchMakerWorld(keyword: String): List<MakerWorldModel> =
+        makerWorldApiSource.search(keyword).results
 }
 
-private class LogInterceptor: Interceptor {
-    override fun intercept(chain: Interceptor.Chain): Response {
-        val request: Request = chain.request()
-        println("Sending request ${request.url} on ${chain.connection()}${request.headers}")
 
-        val response: Response = chain.proceed(request)
-        println("Received response ${response.code} -> ${response.body}")
-
-        return response
-    }
-}

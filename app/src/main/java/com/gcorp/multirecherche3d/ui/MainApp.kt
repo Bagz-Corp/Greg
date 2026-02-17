@@ -31,17 +31,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gcorp.multirecherche3d.domain.model.ModelItem
+import com.gcorp.multirecherche3d.domain.model.ModelType
 import com.gcorp.multirecherche3d.domain.model.Thumbnail
-import com.gcorp.multirecherche3d.ui.designsystem.GregTopAppBar
-import com.gcorp.multirecherche3d.ui.designsystem.ResultCard
-import com.gcorp.multirecherche3d.ui.theme.Charcoal
+import com.gcorp.multirecherche3d.ui.designSystem.GregTopAppBar
+import com.gcorp.multirecherche3d.ui.designSystem.ResultCard
 import com.gcorp.multirecherche3d.ui.theme.GregTheme
 import com.gcorp.multirecherche3d.ui.theme.OffWhite
 import com.gcorp.multirecherche3d.ui.theme.SageGreen
@@ -66,7 +68,8 @@ fun MainApp () {
                 onResultTap = { uri ->
                     viewModel.customTabsIntent.launchUrl(context, uri)
                 },
-                searchResults = uiState.searchResults,
+                sketchFabResults = uiState.sketchFabResults,
+                makerWorldResults = uiState.makerWorldResults
             )
         }
     }
@@ -109,7 +112,8 @@ fun MainResultScreen(
     modifier: Modifier = Modifier,
     onSearch: (String) -> Unit,
     onResultTap: (Uri) -> Unit,
-    searchResults: List<ModelItem>,
+    sketchFabResults: List<ModelItem>,
+    makerWorldResults: List<ModelItem>,
 ) {
     LazyColumn(
         modifier = modifier
@@ -122,21 +126,19 @@ fun MainResultScreen(
 
         item {
             Column (modifier = Modifier.padding(vertical = 8.dp)) {
-                if (searchResults.isNotEmpty()) {
-                    SearchResultTitle()
+                if (sketchFabResults.isNotEmpty()) {
+                    Section(
+                        results = sketchFabResults,
+                        modelType = ModelType.SKETCH_FAB,
+                        onResultTap = onResultTap
+                    )
                 }
 
-                SearchResults(
-                    results = searchResults,
-                    onCardClick = { url ->
-                        onResultTap(url.toUri())
-                    }
-                )
-
-                if (searchResults.isNotEmpty()) {
-                    HorizontalDivider(
-                        thickness = 2.dp,
-                        color = OffWhite
+                if (makerWorldResults.isNotEmpty()) {
+                    Section(
+                        results = makerWorldResults,
+                        modelType = ModelType.MAKER_WORLD,
+                        onResultTap = onResultTap
                     )
                 }
             }
@@ -145,12 +147,16 @@ fun MainResultScreen(
 }
 
 @Composable
-fun SearchResultTitle(modifier: Modifier = Modifier) {
+fun SearchResultTitle(
+    modifier: Modifier = Modifier,
+    title: String
+) {
     Text(
-        text = "SketchFab",
-        style = Typography.headlineMedium,
+        text = title.uppercase(),
+        style = Typography.headlineLarge,
+        fontWeight = FontWeight.Bold,
         modifier = modifier,
-        color = Charcoal
+        color = Color.Black
     )
 }
 
@@ -181,6 +187,32 @@ fun SearchResults(
     }
 }
 
+@Composable
+fun Section(
+    modifier: Modifier = Modifier,
+    results: List<ModelItem>,
+    modelType: ModelType,
+    onResultTap: (Uri) -> Unit
+) {
+    Column(modifier = modifier.padding(vertical = 8.dp)) {
+        SearchResultTitle(
+            title = modelType.value
+        )
+
+        SearchResults(
+            results = results,
+            onCardClick = { url ->
+                onResultTap(url.toUri())
+            }
+        )
+
+        HorizontalDivider(
+            thickness = 2.dp,
+            color = OffWhite
+        )
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
@@ -194,7 +226,8 @@ private fun MainPreview() {
                 modifier = Modifier.padding(paddingValues),
                 onSearch = {},
                 onResultTap = {},
-                searchResults = modelItems
+                sketchFabResults = modelItems,
+                makerWorldResults = modelItems
             )
         }
     }
@@ -212,7 +245,8 @@ private val modelItems by lazy {
             ),
             title = "Card title",
             likeCount = 42,
-            url = "some string"
+            url = "some string",
+            sectionName = "Section Name"
         )
     }
 }

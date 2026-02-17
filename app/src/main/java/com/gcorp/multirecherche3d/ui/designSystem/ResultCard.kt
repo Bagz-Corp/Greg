@@ -1,4 +1,4 @@
-package com.gcorp.multirecherche3d.ui.designsystem
+package com.gcorp.multirecherche3d.ui.designSystem
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -46,7 +46,6 @@ fun ResultCard(
     cardData: ModelItem,
     onClick: (String) -> Unit
 ) {
-
     ElevatedCard(
         modifier = modifier
             .width(300.dp)
@@ -83,8 +82,7 @@ fun ResultCard(
             Spacer(modifier = Modifier.height(2.dp))
 
             Text(
-                modifier = Modifier
-                    .padding(horizontal = 8.dp),
+                modifier = Modifier.padding(horizontal = 8.dp),
                 text = "Likes : ${cardData.likeCount}",
                 style = MaterialTheme.typography.labelSmall,
             )

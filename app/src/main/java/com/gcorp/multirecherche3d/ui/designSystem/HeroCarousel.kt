@@ -1,4 +1,4 @@
-package com.gcorp.multirecherche3d.ui.designsystem
+package com.gcorp.multirecherche3d.ui.designSystem
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -45,8 +45,6 @@ fun HeroCarousel(
     ) {i ->
         val item = items[i]
 
-        println("HeroCarousel - item $item")
-
         AsyncImage(
             model = item.imageUrl,
             // placeholder = painterResource(Color.LightGray.toArgb()),
@@ -55,6 +53,37 @@ fun HeroCarousel(
             modifier = Modifier
                 .maskClip(MaterialTheme.shapes.extraLarge),
         )
+
+//        when (item.painterState) {
+//            is AsyncImagePainter.State.Empty,
+//            is AsyncImagePainter.State.Loading -> {
+//                Box(
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .shimmer()
+//                )
+//            }
+//
+//            is AsyncImagePainter.State.Success -> {
+//                Image(
+//                    modifier = Modifier.fillMaxSize(),
+//                    painter = item.painter,
+//                    contentScale = ContentScale.FillBounds,
+//                    contentDescription = null
+//                )
+//            }
+//
+//            is AsyncImagePainter.State.Error -> {
+//                // Show some error UI.
+//                Text(
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .background(color = Color.LightGray)
+//                        .padding(8.dp),
+//                    text = "Some Error happened"
+//                )
+//            }
+//        }
 
 //        when (item.painterState) {
 //            is AsyncImagePainter.State.Empty,

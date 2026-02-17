@@ -3,15 +3,16 @@ package com.gcorp.multirecherche3d.database.dao
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
-import com.gcorp.multirecherche3d.database.entity.SearchQueryEntity
+import com.gcorp.multirecherche3d.database.entity.SearchResultsEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface QueryDao {
 
-    @Query("SELECT * FROM queries WHERE search_query = :searchQuery LIMIT 1")
-    fun findQuery(searchQuery: String): Flow<SearchQueryEntity?>
+    @Query("SELECT * FROM searchResults WHERE search_query = :searchQuery LIMIT 1")
+    fun getResults(searchQuery: String): Flow<SearchResultsEntity?>
 
     @Upsert
-    fun insertQuery(query: SearchQueryEntity)
+    fun insertResults(query: SearchResultsEntity)
+
 }
