@@ -1,4 +1,4 @@
-package com.gcorp.multirecherche3d.ui.designSystem
+package com.gcorp.multirecherche3d.ui.designsystem
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight

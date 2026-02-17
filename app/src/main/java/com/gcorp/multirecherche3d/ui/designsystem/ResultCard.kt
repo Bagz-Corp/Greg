@@ -1,4 +1,4 @@
-package com.gcorp.multirecherche3d.ui.designSystem
+package com.gcorp.multirecherche3d.ui.designsystem
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

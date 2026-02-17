@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.withContext
@@ -49,17 +48,4 @@ class SearchRepository @Inject constructor(
             )
         }
     }
-
-    suspend fun multiSearch(searchQuery: String): List<ModelItem> {
-        return network.fetchSketchFab(searchQuery).map { it.toModelItem() }
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    fun getSearchResults(searchQuery: String): Flow<List<ModelItem>?> =
-        searchQueryDao
-            .takeIf { searchQuery.isNotEmpty() }
-            ?.findQuery(searchQuery)
-            ?.mapLatest { it?.asModelItems() }
-            ?: emptyFlow()
-
 }

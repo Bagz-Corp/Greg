@@ -1,4 +1,4 @@
-package com.gcorp.multirecherche3d.ui.designSystem
+package com.gcorp.multirecherche3d.ui.designsystem
 
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api

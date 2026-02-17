@@ -17,9 +17,6 @@ class MainAppViewModel @Inject constructor(
     private val searchUseCase: GetSearchResultsUseCase,
 ): ViewModel() {
 
-//    private val _uiState = MutableStateFlow(MainUiState())
-  //  val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
-
     @Inject lateinit var customTabsIntent: CustomTabsIntent
 
     val uiState: StateFlow<MainUiState> = searchUseCase.getResults()
@@ -35,7 +32,7 @@ class MainAppViewModel @Inject constructor(
             initialValue = MainUiState(isLoading = true)
         )
 
-    fun multiSearch(searchQuery: String) = viewModelScope.launch {
+    fun updateQuery(searchQuery: String) = viewModelScope.launch {
         searchUseCase.updateQuery(searchQuery)
     }
 

@@ -39,8 +39,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gcorp.multirecherche3d.domain.model.ModelItem
 import com.gcorp.multirecherche3d.domain.model.Thumbnail
-import com.gcorp.multirecherche3d.ui.designSystem.GregTopAppBar
-import com.gcorp.multirecherche3d.ui.designSystem.ResultCard
+import com.gcorp.multirecherche3d.ui.designsystem.GregTopAppBar
+import com.gcorp.multirecherche3d.ui.designsystem.ResultCard
 import com.gcorp.multirecherche3d.ui.theme.Charcoal
 import com.gcorp.multirecherche3d.ui.theme.GregTheme
 import com.gcorp.multirecherche3d.ui.theme.OffWhite
@@ -62,8 +62,8 @@ fun MainApp () {
         ) { paddingValues ->
             MainResultScreen(
                 modifier = Modifier.padding(paddingValues),
-                onSearch = viewModel::multiSearch,
-                onViewModel = { uri ->
+                onSearch = viewModel::updateQuery,
+                onResultTap = { uri ->
                     viewModel.customTabsIntent.launchUrl(context, uri)
                 },
                 searchResults = uiState.searchResults,
@@ -108,7 +108,7 @@ fun GregSearchBar(
 fun MainResultScreen(
     modifier: Modifier = Modifier,
     onSearch: (String) -> Unit,
-    onViewModel: (Uri) -> Unit,
+    onResultTap: (Uri) -> Unit,
     searchResults: List<ModelItem>,
 ) {
     LazyColumn(
@@ -129,7 +129,7 @@ fun MainResultScreen(
                 SearchResults(
                     results = searchResults,
                     onCardClick = { url ->
-                        onViewModel(url.toUri())
+                        onResultTap(url.toUri())
                     }
                 )
 
@@ -193,7 +193,7 @@ private fun MainPreview() {
             MainResultScreen(
                 modifier = Modifier.padding(paddingValues),
                 onSearch = {},
-                onViewModel = {},
+                onResultTap = {},
                 searchResults = modelItems
             )
         }
