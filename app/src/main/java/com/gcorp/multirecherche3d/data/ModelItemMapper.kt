@@ -1,64 +1,48 @@
 package com.gcorp.multirecherche3d.data
 
+import com.gcorp.multirecherche3d.database.entity.QueryWithResults
 import com.gcorp.multirecherche3d.database.entity.ResultEntity
-import com.gcorp.multirecherche3d.database.entity.SearchResultsEntity
 import com.gcorp.multirecherche3d.domain.model.ModelItem
 import com.gcorp.multirecherche3d.domain.model.Thumbnail
-import com.gcorp.multirecherche3d.domain.model.getBigger
 import com.gcorp.multirecherche3d.network.model.MakerWorldModel
 import com.gcorp.multirecherche3d.network.model.SketchFabModel
 
-fun SketchFabModel.toModelItem() = ModelItem(
+fun SketchFabModel.toResultEntity(parentId: Int) = ResultEntity(
+    parentId = parentId,
     sectionName = ModelType.SKETCH_FAB.value,
-    thumbnails = thumbnails.images.map {
-        Thumbnail(
-            url = it.url,
-            width = it.width,
-            height = it.height
-        )
-    },
     title = this.name,
     likeCount = this.likeCount,
-    url = viewerUrl
+    imageUrl = this.thumbnails.images.first().url,
+    contentUrl = viewerUrl,
 )
 
-fun MakerWorldModel.toModelItem() = ModelItem(
+fun MakerWorldModel.toResultEntity(parentId: Int) = ResultEntity(
+    parentId = parentId,
     sectionName = ModelType.MAKER_WORLD.value,
-    thumbnails = listOf(
-        Thumbnail(
-            url = imageUrl
-        )
-    ),
     title = title,
     likeCount = likeCount,
-    url = generateContentUrl(),
+    imageUrl = imageUrl,
+    contentUrl = generateContentUrl(),
 )
 
-fun SearchResultsEntity.asModelItems(): List<ModelItem> = buildList {
-    addAll(sketchFabResults.toModelItems(ModelType.SKETCH_FAB))
-    addAll(makerWorldResults.toModelItems(ModelType.MAKER_WORLD))
-}
-
-// Extension function for better readability
-private fun List<ResultEntity>.toModelItems(type: ModelType) = map {
+fun ResultEntity.asModelItem(): ModelItem =
     ModelItem(
-        sectionName = type.value,
-        thumbnails = listOf(Thumbnail(url = it.imageUrl)),
-        title = it.title,
-        likeCount = it.likeCount,
-        url = it.contentUrl
+        id = id,
+        sectionName = sectionName,
+        thumbnails = listOf(
+            Thumbnail(
+                url = imageUrl,
+                width = 1,
+                height = 1
+            )
+        ),
+        title = title,
+        likeCount = likeCount,
+        url = contentUrl
     )
-}
 
-fun List<ModelItem>.asResultEntities(): List<ResultEntity> =
-    this.map {
-        ResultEntity(
-            title = it.title,
-            likeCount = it.likeCount,
-            imageUrl = it.thumbnails.getBigger().url,
-            contentUrl = it.url
-        )
-    }
+fun QueryWithResults.asModelItems(): List<ModelItem> =
+        this@asModelItems.results.map { it.asModelItem() }
 
 enum class ModelType(val value: String) {
     SKETCH_FAB("sketchFab"),

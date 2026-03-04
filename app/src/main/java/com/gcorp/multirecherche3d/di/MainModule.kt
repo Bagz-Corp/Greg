@@ -1,5 +1,6 @@
-package com.gcorp.multirecherche3d
+package com.gcorp.multirecherche3d.di
 
+import android.R
 import android.content.Context
 import androidx.browser.customtabs.CustomTabsIntent
 import dagger.Module
@@ -17,7 +18,7 @@ object MainModule {
         CustomTabsIntent
             .Builder()
             .setShowTitle(true)
-            .setStartAnimations(context, android.R.anim.slide_in_left, android.R.anim.slide_out_right)
-            .setExitAnimations(context, android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+            .setStartAnimations(context, R.anim.slide_in_left, R.anim.slide_out_right)
+            .setExitAnimations(context, R.anim.slide_in_left, R.anim.slide_out_right)
             .build()
 }

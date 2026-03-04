@@ -25,6 +25,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -44,7 +46,8 @@ import com.gcorp.multirecherche3d.ui.theme.Typography
 fun ResultCard(
     modifier: Modifier = Modifier,
     cardData: ModelItem,
-    onClick: (String) -> Unit
+    onClick: (String) -> Unit,
+    onFavorite: (Int) -> Unit
 ) {
     ElevatedCard(
         modifier = modifier
@@ -88,7 +91,9 @@ fun ResultCard(
 
             ResultCardBottom(
                 cardUrl = cardData.url,
-                onClick = onClick
+                cardId = cardData.id,
+                onClick = onClick,
+                onFavorite = onFavorite
             )
         }
     }
@@ -145,8 +150,13 @@ fun ResultCardImage(
 fun ResultCardBottom(
     modifier: Modifier = Modifier,
     cardUrl: String,
-    onClick: (String) -> Unit
+    cardId: Int,
+    onClick: (String) -> Unit,
+    onFavorite: (Int) -> Unit
 ) {
+
+    val isFavorite = remember { mutableStateOf(false) }
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -161,8 +171,11 @@ fun ResultCardBottom(
             )
         }
 
+        // Use isFavorite to color the icon when pressed on
         IconButton(
-            onClick = { /* Like */ }
+            onClick = {
+                onFavorite(cardId)
+            }
         ) {
             Icon(
                 Icons.Outlined.FavoriteBorder,

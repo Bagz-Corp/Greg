@@ -1,6 +1,7 @@
 package com.gcorp.multirecherche3d.domain.model
 
 data class ModelItem(
+    val id: Int,
     val sectionName: String,
     val thumbnails: List<Thumbnail>,
     val title: String,
@@ -8,6 +9,7 @@ data class ModelItem(
     val url: String
 )
 
+/** width and height are unlikely to be used, this could be removed */
 data class Thumbnail(
     val url: String,
     val width: Int = 0,

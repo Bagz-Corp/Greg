@@ -1,5 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
+include(":shared")
+
 pluginManagement {
     repositories {
         google {
@@ -13,6 +15,7 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -20,6 +23,8 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
+
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 rootProject.name = "MultiRecherche3D"
 include(":app")

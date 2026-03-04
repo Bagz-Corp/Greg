@@ -70,13 +70,15 @@ fun MainApp () {
         ) { paddingValues ->
             MainResultScreen(
                 modifier = Modifier.padding(paddingValues),
-                onSearch = {query ->
+                onSearch = { query ->
                     keyboardController?.hide()
                     viewModel.updateQuery(query)
                 },
                 onResultTap = { uri ->
-                    println("Opening result url $uri")
                     viewModel.customTabsIntent.launchUrl(context, uri)
+                },
+                onFavorite = {
+                    viewModel.setAsFavorite(it)
                 },
                 sketchFabResults = uiState.sketchFabResults,
                 makerWorldResults = uiState.makerWorldResults
@@ -124,6 +126,7 @@ fun MainResultScreen(
     modifier: Modifier = Modifier,
     onSearch: (String) -> Unit,
     onResultTap: (Uri) -> Unit,
+    onFavorite: (Int) -> Unit,
     sketchFabResults: List<ModelItem>,
     makerWorldResults: List<ModelItem>,
 ) {
@@ -142,7 +145,8 @@ fun MainResultScreen(
                     Section(
                         results = sketchFabResults,
                         modelType = ModelType.SKETCH_FAB,
-                        onResultTap = onResultTap
+                        onResultTap = onResultTap,
+                        onFavorite = onFavorite
                     )
                 }
 
@@ -150,7 +154,8 @@ fun MainResultScreen(
                     Section(
                         results = makerWorldResults,
                         modelType = ModelType.MAKER_WORLD,
-                        onResultTap = onResultTap
+                        onResultTap = onResultTap,
+                        onFavorite = onFavorite
                     )
                 }
             }
@@ -175,7 +180,8 @@ fun SearchResultTitle(
 fun SearchResults(
     modifier: Modifier = Modifier,
     results: List<ModelItem> = emptyList(),
-    onCardClick: (String) -> Unit
+    onCardClick: (String) -> Unit,
+    onFavorite: (Int) -> Unit
 ) {
     val rowState = rememberLazyListState()
     LaunchedEffect(results) {
@@ -195,7 +201,8 @@ fun SearchResults(
             items(results) {
                 ResultCard(
                     cardData = it,
-                    onClick = onCardClick
+                    onClick = onCardClick,
+                    onFavorite = onFavorite
                 )
                 Spacer(
                     modifier = Modifier.width(4.dp)
@@ -212,7 +219,8 @@ fun Section(
     modifier: Modifier = Modifier,
     results: List<ModelItem>,
     modelType: ModelType,
-    onResultTap: (Uri) -> Unit
+    onResultTap: (Uri) -> Unit,
+    onFavorite: (Int) -> Unit
 ) {
     Column(modifier = modifier.padding(vertical = 8.dp)) {
         SearchResultTitle(
@@ -223,7 +231,8 @@ fun Section(
             results = results,
             onCardClick = { url ->
                 onResultTap(url.toUri())
-            }
+            },
+            onFavorite = onFavorite
         )
 
         HorizontalDivider(
@@ -246,7 +255,8 @@ private fun MainPreview() {
                 onSearch = {},
                 onResultTap = {},
                 sketchFabResults = modelItems,
-                makerWorldResults = modelItems
+                makerWorldResults = modelItems,
+                onFavorite = {}
             )
         }
     }
@@ -256,6 +266,7 @@ private fun MainPreview() {
 private val modelItems by lazy {
     List(4) {
         ModelItem(
+            id = 42,
             thumbnails = listOf(
                 Thumbnail(
                     url = "someUrl",

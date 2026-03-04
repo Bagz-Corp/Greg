@@ -8,14 +8,12 @@ plugins {
 
 android {
     namespace = "com.gcorp.multirecherche3d"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.gcorp.multirecherche3d"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -64,12 +62,10 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    implementation(libs.androidx.hilt.navigation.compose)
-
     // DI with Hilt
+    implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-    ksp(libs.hilt.android)
 
     // Networking with retrofit
     implementation(libs.retrofit)
@@ -87,6 +83,10 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
     testImplementation(libs.androidx.room.testing)
-    //implementation("androidx.room:room-paging:${room_version}")
+
+    // KMP shared module
+    implementation(project(":shared"))
+    implementation(libs.androidx.datastore)
+    implementation(libs.okio)
 
 }

@@ -1,7 +1,7 @@
 package com.gcorp.multirecherche3d.data
 
 import com.gcorp.multirecherche3d.database.dao.QueryDao
-import com.gcorp.multirecherche3d.database.entity.SearchResultsEntity
+import com.gcorp.multirecherche3d.database.entity.QueryEntity
 import com.gcorp.multirecherche3d.domain.model.ModelItem
 import com.gcorp.multirecherche3d.network.RemoteDataSource
 import kotlinx.coroutines.Dispatchers
@@ -24,27 +24,32 @@ class SearchRepository @Inject constructor(
     val results: Flow<List<ModelItem>?> = _query
         .flatMapLatest { query ->
             searchQueryDao
-                .getResults(query)
-                .mapLatest {
-                    it?.asModelItems()
-                }
+                .getQueryResults(query)
+                .mapLatest { it?.asModelItems() }
         }
 
     suspend fun updateQuery(query: String) {
         _query.value = query
 
         try {
-            val sketchFabResults = network.fetchSketchFab(query).map { it.toModelItem() }
-            val makerWorldResults = network.fetchMakerWorld(query).map { it.toModelItem() }
+            val sketchFabResults = network.fetchSketchFab(query)
+            val makerWorldResults = network.fetchMakerWorld(query)
 
             withContext(Dispatchers.IO) {
-                searchQueryDao.insertResults(
-                    query = SearchResultsEntity(
-                        searchQuery = query,
-                        sketchFabResults = sketchFabResults.asResultEntities(),
-                        makerWorldResults = makerWorldResults.asResultEntities()
+                searchQueryDao.insertQuery(
+                    query = QueryEntity(
+                        searchQuery = query
                     )
                 )
+
+                val queryEntity = searchQueryDao.getQuery(searchQuery = query)
+
+                val results = (
+                    sketchFabResults.map { it.toResultEntity(queryEntity.uid) } +
+                    makerWorldResults.map { it.toResultEntity(queryEntity.uid) }
+                )
+
+                searchQueryDao.insertResults(results = results)
             }
         } catch (e: Exception) {
             e.printStackTrace()
