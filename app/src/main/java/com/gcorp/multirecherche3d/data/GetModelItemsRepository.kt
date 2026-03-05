@@ -10,7 +10,7 @@ class GetModelItemsRepository @Inject constructor(
     val searchQueryDao: QueryDao
 ) {
 
-    suspend fun getItems(ids: List<Int>): List<ModelItem> = withContext(Dispatchers.IO) {
-        searchQueryDao.getResultsByIds(ids).map { it.asModelItem() }
+    suspend fun getFavorites(ids: List<Int>): List<ModelItem> = withContext(Dispatchers.IO) {
+        searchQueryDao.getResultsByIds(ids).map { it.asModelItem(isFavorite = true) }
     }
 }

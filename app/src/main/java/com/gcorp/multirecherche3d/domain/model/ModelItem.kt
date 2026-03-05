@@ -6,7 +6,8 @@ data class ModelItem(
     val thumbnails: List<Thumbnail>,
     val title: String,
     val likeCount: Int,
-    val url: String
+    val url: String,
+    val isFavorite: Boolean
 )
 
 /** width and height are unlikely to be used, this could be removed */

@@ -2,21 +2,25 @@ package com.gcorp.multirecherche3d.data
 
 import com.gcorp.multirecherche3d.database.dao.QueryDao
 import com.gcorp.multirecherche3d.database.entity.QueryEntity
+import com.gcorp.multirecherche3d.domain.GetFavoritesUseCase
 import com.gcorp.multirecherche3d.domain.model.ModelItem
 import com.gcorp.multirecherche3d.network.RemoteDataSource
+import com.gcorp.shared.PreferencesDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SearchRepository @Inject constructor(
-    val network: RemoteDataSource,
-    val searchQueryDao: QueryDao
+    private val network: RemoteDataSource,
+    private val searchQueryDao: QueryDao,
+    private val preferenceDataSource: PreferencesDataSource,
+    private val getFavoritesUseCase: GetFavoritesUseCase,
 ) {
     private val _query = MutableStateFlow("")
 
@@ -25,7 +29,15 @@ class SearchRepository @Inject constructor(
         .flatMapLatest { query ->
             searchQueryDao
                 .getQueryResults(query)
-                .mapLatest { it?.asModelItems() }
+                .combine(preferenceDataSource.favoriteIds) { results, favoriteIds ->
+                    val favorites = getFavoritesUseCase.getFavorites(favoriteIds)
+
+                    results?.results?.map { resultEntity ->
+                        resultEntity.asModelItem(
+                            isFavorite = resultEntity.id in favoriteIds
+                        )
+                    }?.plus(favorites) ?: emptyList()
+                }
         }
 
     suspend fun updateQuery(query: String) {

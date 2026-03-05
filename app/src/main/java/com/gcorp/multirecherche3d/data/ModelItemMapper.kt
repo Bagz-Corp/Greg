@@ -25,7 +25,9 @@ fun MakerWorldModel.toResultEntity(parentId: Int) = ResultEntity(
     contentUrl = generateContentUrl(),
 )
 
-fun ResultEntity.asModelItem(): ModelItem =
+fun ResultEntity.asModelItem(
+    isFavorite: Boolean = false
+): ModelItem =
     ModelItem(
         id = id,
         sectionName = sectionName,
@@ -38,7 +40,8 @@ fun ResultEntity.asModelItem(): ModelItem =
         ),
         title = title,
         likeCount = likeCount,
-        url = contentUrl
+        url = contentUrl,
+        isFavorite = isFavorite
     )
 
 fun QueryWithResults.asModelItems(): List<ModelItem> =

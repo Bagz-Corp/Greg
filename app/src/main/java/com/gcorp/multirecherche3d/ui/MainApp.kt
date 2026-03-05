@@ -77,8 +77,8 @@ fun MainApp () {
                 onResultTap = { uri ->
                     viewModel.customTabsIntent.launchUrl(context, uri)
                 },
-                onFavorite = {
-                    viewModel.setAsFavorite(it)
+                onFavorite = { id, state ->
+                    viewModel.updateFavorite(id, state)
                 },
                 sketchFabResults = uiState.sketchFabResults,
                 makerWorldResults = uiState.makerWorldResults
@@ -126,7 +126,7 @@ fun MainResultScreen(
     modifier: Modifier = Modifier,
     onSearch: (String) -> Unit,
     onResultTap: (Uri) -> Unit,
-    onFavorite: (Int) -> Unit,
+    onFavorite: (Int, Boolean) -> Unit,
     sketchFabResults: List<ModelItem>,
     makerWorldResults: List<ModelItem>,
 ) {
@@ -181,7 +181,7 @@ fun SearchResults(
     modifier: Modifier = Modifier,
     results: List<ModelItem> = emptyList(),
     onCardClick: (String) -> Unit,
-    onFavorite: (Int) -> Unit
+    onFavorite: (Int, Boolean) -> Unit
 ) {
     val rowState = rememberLazyListState()
     LaunchedEffect(results) {
@@ -220,7 +220,7 @@ fun Section(
     results: List<ModelItem>,
     modelType: ModelType,
     onResultTap: (Uri) -> Unit,
-    onFavorite: (Int) -> Unit
+    onFavorite: (Int, Boolean) -> Unit
 ) {
     Column(modifier = modifier.padding(vertical = 8.dp)) {
         SearchResultTitle(
@@ -256,7 +256,7 @@ private fun MainPreview() {
                 onResultTap = {},
                 sketchFabResults = modelItems,
                 makerWorldResults = modelItems,
-                onFavorite = {}
+                onFavorite = {_, _ ->}
             )
         }
     }
@@ -277,7 +277,8 @@ private val modelItems by lazy {
             title = "Card title",
             likeCount = 42,
             url = "some string",
-            sectionName = "Section Name"
+            sectionName = "Section Name",
+            isFavorite = false
         )
     }
 }

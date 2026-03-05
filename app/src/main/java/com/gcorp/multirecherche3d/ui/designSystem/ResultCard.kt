@@ -14,19 +14,26 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -47,7 +54,7 @@ fun ResultCard(
     modifier: Modifier = Modifier,
     cardData: ModelItem,
     onClick: (String) -> Unit,
-    onFavorite: (Int) -> Unit
+    onFavorite: (Int, Boolean) -> Unit
 ) {
     ElevatedCard(
         modifier = modifier
@@ -92,6 +99,7 @@ fun ResultCard(
             ResultCardBottom(
                 cardUrl = cardData.url,
                 cardId = cardData.id,
+                isFavorite = cardData.isFavorite,
                 onClick = onClick,
                 onFavorite = onFavorite
             )
@@ -146,16 +154,18 @@ fun ResultCardImage(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ResultCardBottom(
     modifier: Modifier = Modifier,
+    isFavorite: Boolean,
     cardUrl: String,
     cardId: Int,
     onClick: (String) -> Unit,
-    onFavorite: (Int) -> Unit
+    onFavorite: (Int, Boolean) -> Unit
 ) {
 
-    val isFavorite = remember { mutableStateOf(false) }
+    var isFavorite by rememberSaveable { mutableStateOf(isFavorite) }
 
     Row(
         modifier = modifier
@@ -171,16 +181,34 @@ fun ResultCardBottom(
             )
         }
 
+        val description = "Add as favorites"
         // Use isFavorite to color the icon when pressed on
-        IconButton(
-            onClick = {
-                onFavorite(cardId)
-            }
+        TooltipBox(
+            positionProvider =
+                TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
+            tooltip = { PlainTooltip { Text(description) } },
+            state = rememberTooltipState(),
         ) {
-            Icon(
-                Icons.Outlined.FavoriteBorder,
-                contentDescription = "Ajouter aux favoris"
-            )
+            IconToggleButton(
+                checked = isFavorite,
+                onCheckedChange = {
+                    isFavorite = it
+                    onFavorite(cardId, it)
+                },
+                modifier = modifier,
+            ) {
+                if (isFavorite) {
+                    Icon(
+                        Icons.Filled.Favorite,
+                        contentDescription = description
+                    )
+                } else {
+                    Icon(
+                        Icons.Outlined.FavoriteBorder,
+                        contentDescription = description
+                    )
+                }
+            }
         }
     }
 }
