@@ -4,12 +4,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.gcorp.multirecherche3d.ui.theme.GregTheme
-import com.gcorp.multirecherche3d.ui.theme.SageGreen
 import com.gcorp.multirecherche3d.ui.theme.Typography
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -17,9 +15,6 @@ import com.gcorp.multirecherche3d.ui.theme.Typography
 fun GregTopAppBar(modifier: Modifier = Modifier) {
     TopAppBar(
         modifier = modifier.fillMaxWidth(),
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = SageGreen
-        ),
         title = {
             Text(
                 text = "Greg",
@@ -29,10 +24,12 @@ fun GregTopAppBar(modifier: Modifier = Modifier) {
     )
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun TopAppBarPreview() {
-    GregTheme {
+    GregTheme(
+        darkTheme = false
+    ) {
         GregTopAppBar()
     }
 }

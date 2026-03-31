@@ -1,7 +1,6 @@
 package com.gcorp.multirecherche3d.ui
 
 import android.net.Uri
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -33,7 +32,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -49,7 +47,6 @@ import com.gcorp.multirecherche3d.ui.designSystem.GregTopAppBar
 import com.gcorp.multirecherche3d.ui.designSystem.ResultCard
 import com.gcorp.multirecherche3d.ui.theme.GregTheme
 import com.gcorp.multirecherche3d.ui.theme.OffWhite
-import com.gcorp.multirecherche3d.ui.theme.SageGreen
 import com.gcorp.multirecherche3d.ui.theme.SoftGrey
 import com.gcorp.multirecherche3d.ui.theme.Typography
 
@@ -133,7 +130,7 @@ fun MainResultScreen(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .background(brush = Brush.verticalGradient(listOf(SageGreen, OffWhite))),
+            .gradientSurface(),
         contentPadding = PaddingValues(horizontal = 16.dp),
         verticalArrangement = Arrangement.Top,
     ) {

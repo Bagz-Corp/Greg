@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -12,9 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -22,6 +21,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.gcorp.multirecherche3d.ui.theme.OffWhite
+import com.gcorp.multirecherche3d.ui.theme.SageGreen
 
 @Composable
 fun Modifier.shimmer(cornerRadius: Dp = 0.dp): Modifier {
@@ -61,16 +62,7 @@ fun Modifier.shimmer(cornerRadius: Dp = 0.dp): Modifier {
     }
 }
 
-fun Modifier.gradientBackground(topColor: Color, bottomColor: Color = Color.White): Modifier = composed {
-    drawWithContent {
-        drawRect(
-            brush = Brush.verticalGradient(listOf(topColor, bottomColor)),
-            size = size
-        )
-        drawContent()
-    }
-}
-
+fun Modifier.gradientSurface(): Modifier = background(brush = Brush.verticalGradient(listOf(SageGreen, OffWhite)))
 
 @Preview(showBackground = true)
 @Composable
