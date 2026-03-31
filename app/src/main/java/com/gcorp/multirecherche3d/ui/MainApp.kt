@@ -3,9 +3,7 @@ package com.gcorp.multirecherche3d.ui
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
@@ -27,7 +25,6 @@ import com.gcorp.multirecherche3d.domain.model.ModelItem
 import com.gcorp.multirecherche3d.domain.model.ModelType
 import com.gcorp.multirecherche3d.domain.model.Thumbnail
 import com.gcorp.multirecherche3d.ui.designSystem.GregSearchBar
-import com.gcorp.multirecherche3d.ui.designSystem.GregTopAppBar
 import com.gcorp.multirecherche3d.ui.designSystem.MainBottomBar
 import com.gcorp.multirecherche3d.ui.designSystem.Screen
 import com.gcorp.multirecherche3d.ui.designSystem.Section
@@ -46,7 +43,7 @@ fun MainApp() {
     Surface {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
-            topBar = { GregTopAppBar() },
+            // topBar = { GregTopAppBar() },
             bottomBar = {
                 MainBottomBar(
                     currentScreen = currentScreen,
@@ -101,10 +98,7 @@ fun MainResultScreen(
             .gradientSurface(),
         contentPadding = PaddingValues(horizontal = 16.dp),
     ) {
-        item { 
-            Spacer(modifier = Modifier.height(8.dp))
-            GregSearchBar(onSearch = onSearch) 
-        }
+        item { GregSearchBar(onSearch = onSearch) }
 
         item {
             Column (modifier = Modifier.padding(vertical = 8.dp)) {
@@ -130,7 +124,7 @@ fun MainResultScreen(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun MainResultScreenPreview() {
     GregTheme {

@@ -21,8 +21,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.gcorp.multirecherche3d.ui.theme.HawkesBlue
 import com.gcorp.multirecherche3d.ui.theme.OffWhite
-import com.gcorp.multirecherche3d.ui.theme.SageGreen
 
 @Composable
 fun Modifier.shimmer(cornerRadius: Dp = 0.dp): Modifier {
@@ -62,7 +62,9 @@ fun Modifier.shimmer(cornerRadius: Dp = 0.dp): Modifier {
     }
 }
 
-fun Modifier.gradientSurface(): Modifier = background(brush = Brush.verticalGradient(listOf(SageGreen, OffWhite)))
+fun Modifier.gradientSurface(): Modifier = background(
+    brush = Brush.verticalGradient(listOf(HawkesBlue, OffWhite))
+)
 
 @Preview(showBackground = true)
 @Composable

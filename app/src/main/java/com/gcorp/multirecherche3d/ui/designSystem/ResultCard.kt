@@ -70,7 +70,9 @@ fun ResultCard(
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
-        Column {
+        Column(
+            modifier = Modifier.background(color = OffWhite)
+        ){
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -92,6 +94,7 @@ fun ResultCard(
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
+                            .background(color = OffWhite)
                             .clickable { onFavorite(cardData.id, !cardData.isFavorite) },
                         contentAlignment = Alignment.Center
                     ) {
@@ -203,7 +206,7 @@ fun ResultCardImage(
 }
 
 
-@Preview
+@Preview(showBackground = true, backgroundColor = 1)
 @Composable
 private fun ResultCardPreview() {
     GregTheme {
