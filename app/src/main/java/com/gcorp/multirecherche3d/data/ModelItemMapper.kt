@@ -1,6 +1,5 @@
 package com.gcorp.multirecherche3d.data
 
-import com.gcorp.multirecherche3d.database.entity.QueryWithResults
 import com.gcorp.multirecherche3d.database.entity.ResultEntity
 import com.gcorp.multirecherche3d.domain.model.ModelItem
 import com.gcorp.multirecherche3d.domain.model.Thumbnail
@@ -12,7 +11,7 @@ fun SketchFabModel.toResultEntity(parentId: Int) = ResultEntity(
     sectionName = ModelType.SKETCH_FAB.value,
     title = this.name,
     likeCount = this.likeCount,
-    imageUrl = this.thumbnails.images.first().url,
+    imageUrl = this.thumbnails.images.firstOrNull()?.url ?: "Missing URL",
     contentUrl = viewerUrl,
 )
 
@@ -43,9 +42,6 @@ fun ResultEntity.asModelItem(
         url = contentUrl,
         isFavorite = isFavorite
     )
-
-fun QueryWithResults.asModelItems(): List<ModelItem> =
-        this@asModelItems.results.map { it.asModelItem() }
 
 enum class ModelType(val value: String) {
     SKETCH_FAB("sketchFab"),

@@ -24,6 +24,9 @@ kotlinTest = "2.3.0"
 runner = "1.7.0"
 core = "1.7.0"
 okio = "3.10.2"
+mockk = "1.14.9"
+kotlinxCoroutinesTest = "1.10.2"
+turbine = "1.2.1"
 
 [libraries]
 androidx-browser = { module = "androidx.browser:browser", version.ref = "browser" }
@@ -67,6 +70,10 @@ androidx-runner = { group = "androidx.test", name = "runner", version.ref = "run
 androidx-core = { group = "androidx.test", name = "core", version.ref = "core" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
+
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

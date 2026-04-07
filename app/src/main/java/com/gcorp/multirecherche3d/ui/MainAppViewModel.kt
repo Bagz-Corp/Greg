@@ -28,7 +28,9 @@ class MainAppViewModel @Inject constructor(
     val uiState: StateFlow<MainUiState> = searchUseCase.getResults().combine(
         preferencesDataSource.favoriteIds
     ) { searchResults, favoriteIds ->
-        val favorites = getFavoritesUseCase.getFavorites(favoriteIds)
+        val favorites = if (favoriteIds.isNotEmpty()) {
+            getFavoritesUseCase.getFavorites(favoriteIds)
+        } else emptyList()
 
         MainUiState(
             isLoading = false,
